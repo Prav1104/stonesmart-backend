@@ -60,7 +60,6 @@ Hosting – Vercel (Frontend), Render/Railway (Backend), MongoDB Atlas (Database
 ## API Overview
 
 ### Endpoint Method Description Access
-
 /api/auth/signup POST Register new user (Admin, Sales Rep, Client) Public
 /api/auth/login POST Authenticate user Public
 /api/slabs GET Get all slab records Authenticated
@@ -68,3 +67,9 @@ Hosting – Vercel (Frontend), Render/Railway (Backend), MongoDB Atlas (Database
 /api/slabs/:id DELETE Delete a slab entry Admin only
 /api/orders POST Create a new order Authenticated
 /api/leads GET Retrieve all leads with filters (status/date) Admin / Sales Rep
+
+
+Hosted link backend : https://stonesmart-backend.onrender.com
+
+Hosted link Frontend :https://stonesmart-frontend-87kv-kej39tvh4.vercel.app
+
