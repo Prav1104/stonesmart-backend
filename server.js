@@ -7,20 +7,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// import routes
+
 const authRoutes = require("./routes/auth");
 
-// mount routes  ✅ notice the leading slash
+// CHECKING IF MOUNTING IS DONE
 app.use("/api/auth", authRoutes);
-console.log("✅ Routes mounted");
+console.log(" Routes mounted");
 
 
-// connect DB
+// DATABASE CONNECTION DONE HERE 
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ DB Connection Error:", err));
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.error(" DB Connection Error:", err));
 
+
+  
 app.get("/", (req, res) => res.send("StoneSmart backend running 🚀"));
 
 const PORT = process.env.PORT || 5001;

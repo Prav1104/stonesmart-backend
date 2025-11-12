@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User"); // we'll create this next
+const User = require("../models/User");
 
-// 🔹 Signup Route
+// SIGNUP ROUTE 
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -22,7 +22,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// 🔹 Login Route
+// LOGIN ROUTE
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -39,6 +39,7 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1d" }
     );
 
+    
     res.json({ message: "Login successful", token });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
