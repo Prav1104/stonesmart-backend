@@ -1,15 +1,11 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 const slabSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  material: { type: String, required: true }, // granite / quartz
-  color: { type: String, required: true },
-  origin: { type: String },
-  price: { type: Number, required: true },
-  thickness: { type: Number },
-  stockQty: { type: Number, default: 0 },
-  imageUrl: { type: String },
-  createdAt: { type: Date, default: Date.now }
-})
+  origin: { type: String, required: true },
+  price_per_sqyard: { type: Number, required: true },
+  thickness_mm: { type: Number, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
 
-module.exports = mongoose.model("Slab", slabSchema)
+module.exports = mongoose.model("Slab", slabSchema);
