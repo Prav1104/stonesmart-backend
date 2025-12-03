@@ -1,104 +1,51 @@
 const Lead = require("../models/Lead");
 
-// ---------------------------------
 // CREATE LEAD
-// ---------------------------------
 exports.createLead = async (req, res) => {
   try {
-    const lead = await Lead.create(req.body);
+    const lead = await Lead.create({
+      ...req.body,
+      assignedTo: req.user.id
+    });
+
     res.status(201).json({ success: true, data: lead });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error creating lead", error });
+    console.error("Lead Create Error:", error);
+    res.status(500).json({ success: false, message: "Error creating lead" });
   }
 };
 
-// ---------------------------------
-// GET ALL LEADS (search + filter + sort + pagination)
-// ---------------------------------
+// GET LEADS with filters
 exports.getLeads = async (req, res) => {
   try {
-    const {
-      search = "",
-      status,
-      sortBy = "createdAt",
-      sortOrder = "desc",
-      page = 1,
-      limit = 10
-    } = req.query;
+    const { status, from, to } = req.query;
 
     const query = {};
 
-    if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { phone: { $regex: search, $options: "i" } },
-        { interest: { $regex: search, $options: "i" } }
-      ];
+    if (status) query.status = status;
+    if (from || to) {
+      query.createdAt = {};
+      if (from) query.createdAt.$gte = new Date(from);
+      if (to) query.createdAt.$lte = new Date(to);
     }
 
-    if (status) query.status = status;
-
     const leads = await Lead.find(query)
-      .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
-      .skip((page - 1) * limit)
-      .limit(Number(limit));
+      .sort({ createdAt: -1 })
+      .populate("assignedTo", "name email");
 
-    const total = await Lead.countDocuments(query);
-
-    res.json({
-      success: true,
-      data: leads,
-      total,
-      page: Number(page),
-      totalPages: Math.ceil(total / limit)
-    });
+    res.json({ success: true, data: leads });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error fetching leads", error });
+    console.error("Lead Fetch Error:", error);
+    res.status(500).json({ success: false, message: "Error fetching leads" });
   }
 };
 
-// ---------------------------------
-// GET SINGLE LEAD
-// ---------------------------------
-exports.getLeadById = async (req, res) => {
-  try {
-    const lead = await Lead.findById(req.params.id);
-    if (!lead) return res.status(404).json({ success: false, message: "Lead not found" });
-
-    res.json({ success: true, data: lead });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Error fetching lead", error });
-  }
-};
-
-// ---------------------------------
-// UPDATE LEAD
-// ---------------------------------
-exports.updateLead = async (req, res) => {
-  try {
-    const updated = await Lead.findByIdAndUpdate(req.params.id, req.body, {
-      new: true
-    });
-
-    if (!updated) return res.status(404).json({ success: false, message: "Lead not found" });
-
-    res.json({ success: true, message: "Lead updated", data: updated });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Error updating lead", error });
-  }
-};
-
-// ---------------------------------
-// DELETE LEAD
-// ---------------------------------
+// DELETE
 exports.deleteLead = async (req, res) => {
   try {
-    const deleted = await Lead.findByIdAndDelete(req.params.id);
-
-    if (!deleted) return res.status(404).json({ success: false, message: "Lead not found" });
-
+    await Lead.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: "Lead deleted" });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error deleting lead", error });
+    res.status(500).json({ success: false, message: "Error deleting lead" });
   }
 };
