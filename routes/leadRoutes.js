@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { createLead, getLeads, deleteLead } = require("../controllers/leadController");
-const auth = require("../middleware/authMiddleware");
+const auth = require("../routes/auth");
 
 // Routes
 router.post("/", auth, createLead);
