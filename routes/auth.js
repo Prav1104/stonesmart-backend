@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+
 // SIGNUP ROUTE 
 router.post("/signup", async (req, res) => {
   try {
@@ -21,6 +22,7 @@ router.post("/signup", async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 });
+
 
 // LOGIN ROUTE
 router.post("/login", async (req, res) => {
