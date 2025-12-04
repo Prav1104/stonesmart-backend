@@ -1,29 +1,24 @@
 const express = require("express");
 const router = express.Router();
 
-const authMiddleware = require("../middleware/authMiddleware");
-
+const auth = require("../middleware/authMiddleware");
 const {
   createSlab,
   getSlabs,
-  getSingleSlab,
   updateSlab,
-  deleteSlab,
+  deleteSlab
 } = require("../controllers/slabController");
 
-// CREATE
-router.post("/", authMiddleware, createSlab);
+// CREATE SLAB
+router.post("/", auth, createSlab);
 
-// GET ALL
-router.get("/", authMiddleware, getSlabs);
+// GET ALL SLABS
+router.get("/", auth, getSlabs);
 
-// GET SINGLE
-router.get("/:id", authMiddleware, getSingleSlab);
+// UPDATE SLAB
+router.put("/:id", auth, updateSlab);
 
-// UPDATE
-router.put("/:id", authMiddleware, updateSlab);
-
-// DELETE
-router.delete("/:id", authMiddleware, deleteSlab);
+// DELETE SLAB
+router.delete("/:id", auth, deleteSlab);
 
 module.exports = router;
