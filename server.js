@@ -1,67 +1,60 @@
+// --------------------------------------------------
+// LOAD ENV + IMPORTS
+// --------------------------------------------------
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
+const mongoose = require("mongoose");
 
+// --------------------------------------------------
+// CREATE EXPRESS APP (must come BEFORE app.use)
+// --------------------------------------------------
 const app = express();
 
 // --------------------------------------------------
-// ✅ FIXED CORS — WORKS WITH RENDER + LOCALHOST
+// MIDDLEWARE
 // --------------------------------------------------
 app.use(
   cors({
-    origin: "*", // allow ALL origins for development + render stability
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-// 🔥 This line ensures OPTIONS preflight NEVER fails on Render
-// app.options("*", cors());
-
-// --------------------------------------------------
-// Middleware
-// --------------------------------------------------
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // --------------------------------------------------
 // ROUTES
 // --------------------------------------------------
-const authRoutes = require("./routes/auth");
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/leads", require("./routes/leadRoutes"));
+app.use("/api/slabs", require("./routes/slabRoutes"));
+app.use("/api/orders", require("./routes/orderRoutes"));
 
-const leadRoutes = require("./routes/leadRoutes");
-app.use("/api/leads", leadRoutes);
-
-const slabRoutes = require("./routes/slabRoutes");
-app.use("/api/slabs", slabRoutes);
-
-const orderRoutes = require("./routes/orderRoutes");
-app.use("/api/orders", orderRoutes);
-
-
-
-
-
-
-
-console.log("Routes mounted");
+console.log("Routes loaded");
 
 // --------------------------------------------------
 // DATABASE CONNECTION
 // --------------------------------------------------
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.error("DB Connection Error:", err));
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB Error →", err));
 
 // --------------------------------------------------
-// TEST ROOT ENDPOINT
+// ROOT ENDPOINT
 // --------------------------------------------------
-app.get("/", (req, res) => res.send("StoneSmart backend running 🚀"));
+app.get("/", (req, res) => {
+  res.send("StoneSmart backend running 🚀");
+});
 
 // --------------------------------------------------
-// START SERVER
+// START SERVER  → ONLY ONE PORT DECLARATION!
 // --------------------------------------------------
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
