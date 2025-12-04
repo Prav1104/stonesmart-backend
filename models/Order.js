@@ -4,8 +4,8 @@ const orderSchema = new mongoose.Schema({
   customer_name: { type: String, required: true },
   customer_phone: { type: String, required: true },
   slab_name: { type: String, required: true },
-  quantity_sqft: { type: Number, required: true },
-  price_total: { type: Number, required: true },
+  quantity: { type: Number, required: true },
+  total_price: { type: Number, required: true },
 
   status: {
     type: String,
