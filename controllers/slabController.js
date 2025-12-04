@@ -1,25 +1,21 @@
 const Slab = require("../models/Slab");
 
-// CREATE
+// CREATE SLAB
 exports.createSlab = async (req, res) => {
   try {
     const slab = await Slab.create(req.body);
     res.status(201).json({ success: true, data: slab });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error creating slab",
-      error: error.message
-    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
-// GET ALL (with search/filter)
+// GET ALL SLABS (search + filter + sort)
 exports.getSlabs = async (req, res) => {
   try {
-    const { search = "", material = "" } = req.query;
+    const { search = "", material = "", sortBy = "createdAt", order = "desc" } = req.query;
 
-    const query = {};
+    let query = {};
 
     if (search) {
       query.name = { $regex: search, $options: "i" };
@@ -27,32 +23,22 @@ exports.getSlabs = async (req, res) => {
 
     if (material) query.material = material;
 
-    const slabs = await Slab.find(query).sort({ createdAt: -1 });
+    const slabs = await Slab.find(query).sort({ [sortBy]: order === "asc" ? 1 : -1 });
 
     res.json({ success: true, data: slabs });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error fetching slabs",
-      error: error.message
-    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
 // UPDATE
 exports.updateSlab = async (req, res) => {
   try {
-    const updated = await Slab.findByIdAndUpdate(req.params.id, req.body, {
-      new: true
-    });
+    const updated = await Slab.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
     res.json({ success: true, data: updated });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error updating slab",
-      error: error.message
-    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
@@ -61,11 +47,7 @@ exports.deleteSlab = async (req, res) => {
   try {
     await Slab.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: "Slab deleted" });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error deleting slab",
-      error: error.message
-    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
